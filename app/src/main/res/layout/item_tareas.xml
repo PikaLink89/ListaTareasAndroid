@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:orientation="vertical" android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:padding="5dp">
+
+    <!-- layout_alignBaseline="@id/button" lo alinea al boton -->
+
+    <TextView
+        android:id="@+id/titulo_tarea"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignBaseline="@id/boton_terminado"
+        android:text="TextView"
+        android:textSize="20sp" />
+
+    <ImageButton
+        android:id="@+id/boton_terminado"
+        android:layout_width="110dp"
+        android:layout_height="48dp"
+        android:text="Terminado"
+        android:layout_alignParentRight="true"
+        android:onClick="borrarTarea"
+        app:srcCompat="@drawable/finishbutton"
+        android:scaleType="fitXY"/>
+
+    <ImageButton
+        android:id="@+id/boton_editar"
+        android:layout_width="110dp"
+        android:layout_height="48dp"
+        android:layout_alignLeft="@id/boton_terminado"
+        android:layout_marginLeft="-105dp"
+
+        android:onClick="editarTareaMain"
+        android:scaleType="fitXY"
+        app:srcCompat="@drawable/editbutton" />
+    <!-- layout_alignParentRight="true" lo alinea a la derecha del padre -->
+
+
+
+
+
+    <!-- layout_alignParentRight="true" lo alinea a la derecha del padre -->
+</RelativeLayout>
