@@ -6,6 +6,7 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.media.MediaPlayer;
 import android.os.Bundle;
 import android.os.Parcelable;
 import android.view.Menu;
@@ -27,6 +28,10 @@ public class MainActivity extends AppCompatActivity {
     controladorDB cDB;
     ArrayAdapter<String> mAdapter;
     ListView listViewTareas;
+    MediaPlayer mp;
+    Toast toast;
+    Toast toast2;
+    MediaPlayer mpAlert;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -34,6 +39,10 @@ public class MainActivity extends AppCompatActivity {
         cDB = new controladorDB(this);
         listViewTareas = (ListView) findViewById(R.id.ListTask);
         actualizadorTareas();
+        mp = MediaPlayer.create(this, R.raw.click); //Importamos el sonido click
+        mpAlert = MediaPlayer.create(this, R.raw.alert); //Importamos el sonido alert
+        toast2 = Toast.makeText(this, "No puede estar en blanco", Toast.LENGTH_LONG);
+
     }
     //Cargamos la barra y le damos funcionalidad
 
@@ -48,13 +57,16 @@ public class MainActivity extends AppCompatActivity {
     public boolean onOptionsItemSelected(MenuItem item) {
         //Si se pulsa el item salir, entonces vamos a la pantalla de Login
         if (item.getItemId() == R.id.itemsalir) {
+            mp.start(); //Reproducir sonido click
             Intent intent = new Intent(this, Login.class);
             startActivity(intent);
+            finish();
         }
 
         //Dar funcionalidad al item añadir tarea
         //Creamos una caja donde el usuario pueda escribir un texto
         if (item.getItemId() == R.id.nuevaTarea) {
+            mp.start(); //Reproducir sonido click
             //Cuando se pulse el item, mostramos un toad de añadir tarea
             Toast toast = Toast.makeText(this, "Añadir tarea", Toast.LENGTH_LONG);
             toast.show();
@@ -68,12 +80,29 @@ public class MainActivity extends AppCompatActivity {
                     .setPositiveButton("Añadir", new DialogInterface.OnClickListener() {
                         @Override
                         public void onClick(DialogInterface dialog, int which) {
-                            //Le pasamos al objeto cDB el metodo añadir tarea el texto que ha introducido el usuario
-                            cDB.addTarea(cajaTexto.getText().toString());
-                            actualizadorTareas();
+
+                            if(cajaTexto.getText().toString().equals("")){ //Comprueba que no esté en blanco
+                                mpAlert.start(); //Sonido alerta
+                                toast2.show();
+                            }
+                            else{
+                                mp.start();//Reproducir sonido click
+                                //Le pasamos al objeto cDB el metodo añadir tarea el texto que ha introducido el usuario
+                                cDB.addTarea(cajaTexto.getText().toString());
+                                actualizadorTareas();
+
+                            }
+
                         }
                     })
-                    .setNegativeButton("Cancelar", null)
+                    .setNegativeButton("Cancelar", new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+                            mp.start();
+
+                        }
+
+                    } )
                     .create();
             dialog.show();
 
@@ -100,6 +129,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
     public void borrarTarea(View view){
+        mp.start(); //Reproducir sonido click
         //Obtenemos el padre del botón (El recuadro que tiene el botón)
         View padreBoton = (View) view.getParent();
         //Obtenemos la tarea que está dentro de ese view (La tarea que tiene a la izq del botón)
@@ -109,13 +139,13 @@ public class MainActivity extends AppCompatActivity {
         //Actualizamos las tareas para que desaparezca del listado
         actualizadorTareas();
         //Agregamos un Toast de tarea realizada
-        Toast toast = Toast.makeText(this, "Tarea Realizada", Toast.LENGTH_LONG);
+        toast = Toast.makeText(this, "Tarea Realizada", Toast.LENGTH_LONG);
         toast.show();
     }
 
     //Cuando el usuario pulse el botón editar...
     public void editarTareaMain(View view){
-
+        mp.start(); //Reproducir sonido click
         View padreBoton = (View) view.getParent();
         TextView tareaIzqBoton = (TextView) padreBoton.findViewById(R.id.titulo_tarea);
         //Guardamos en una variable el contenido antiguo.
@@ -131,14 +161,33 @@ public class MainActivity extends AppCompatActivity {
                 .setPositiveButton("Editar", new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
+
                         //Le pasamos al objeto cDB el metodo editar tarea el texto que ha introducido el usuario, también el que había anteriormente
                         String tareaNueva = cajaTexto.getText().toString();
-                        cDB.editarTareaBD(tareaAntigua, tareaNueva);
-                        //Actualizamos para que se visualicen los cambios
-                        actualizadorTareas();
+                        if(tareaNueva.equals("")){ //Comprueba que no esté en blanco
+                            mpAlert.start(); //Sonido alerta
+
+                            toast2.show();
+                        }
+                        else{
+                            mp.start();// Sonido Click
+
+                            cDB.editarTareaBD(tareaAntigua, tareaNueva);
+                            //Actualizamos para que se visualicen los cambios
+                            actualizadorTareas();
+
+                        }
+
                     }
                 })
-                .setNegativeButton("Cancelar", null)
+                .setNegativeButton("Cancelar", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        mp.start();
+
+                    }
+
+                } )
                 .create();
         dialog.show();
 

@@ -22,7 +22,7 @@ public class controladorDB extends SQLiteOpenHelper {
     //Aquí se crea la tabla
     public void onCreate(SQLiteDatabase db) {
         //Con db.execSQL damos la instruccion para crear la tabla de tareas
-    db.execSQL("CREATE TABLE TASKS (ID INTEGER PRIMARY KEY AUTOINCREMENT, NAME TEXT NOT NULL);");
+    //db.execSQL("CREATE TABLE TASKS (ID INTEGER PRIMARY KEY AUTOINCREMENT, NAME TEXT NOT NULL);");
         //Con db.execSQL damos la instruccion para crear la tabla de usuarios
     db.execSQL("CREATE TABLE USERS (ID INTEGER PRIMARY KEY AUTOINCREMENT, USER TEXT NOT NULL, PASS TEXT NOT NULL);");
     }
@@ -80,6 +80,7 @@ public class controladorDB extends SQLiteOpenHelper {
 
     }
 
+    //Metodo que borrará la tarea que le pasemos
     public void borrarTareaBD(String tarea){
         SQLiteDatabase db = this.getReadableDatabase();
         db.delete("TASKS","NAME=?",new String[]{tarea});
@@ -95,6 +96,7 @@ public class controladorDB extends SQLiteOpenHelper {
         db.close();
     }
 
+    //Metodo que agrega el user y pass que le pasamos a la tabla
     public void crearUserDB(String usuarioBD, String passBD){
 
         ContentValues registro = new ContentValues();
@@ -110,6 +112,34 @@ public class controladorDB extends SQLiteOpenHelper {
         db.close();
     }
 
+    //Metodo para crear tabla con el usuario que le pasamos que serán sus tareas
+
+    public void crearTablaUserDB(String userTabla){
+        SQLiteDatabase db = this.getWritableDatabase();
+
+        db.execSQL("CREATE TABLE '"+ userTabla +"' (ID INTEGER PRIMARY KEY AUTOINCREMENT, NAME TEXT NOT NULL);");
+        db.close();
+
+    }
+
+    //Metodo para consultar si el usuario existe en la tabla
+    public boolean consultaUser(String usuarioBD){
+
+        SQLiteDatabase db = this.getReadableDatabase();
+        Cursor resultadoCursorLogin = db.rawQuery("SELECT PASS FROM USERS WHERE (USER =?) ", new String[]{usuarioBD});
+        //Cursor cursore = db.rawQuery("SELECT * FROM USERS", null);
+        //db.execSQL("SELECT PASS FROM USERS WHERE NAME = '"+ user +"'");
+        int regs = resultadoCursorLogin.getCount(); //Vemos cuantos registros hemos obtenido
+        db.close();
+        if(regs==0){
+            return false;
+        }
+        else{
+            return true;
+        }
+
+    }
+    //Comprueba que user y pass coinciden para poder iniciar sesion
     public boolean iniciarSesionDB(String user, String pass){
 
         SQLiteDatabase db = this.getReadableDatabase();
